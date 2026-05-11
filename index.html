@@ -175,9 +175,9 @@ body{
   font-size:20px;
 }
 
-/* PASSWORD MODAL */
+/* PASSWORD SCREEN */
 
-#passwordModal{
+#passwordScreen{
 
   position:fixed;
 
@@ -187,9 +187,9 @@ body{
   width:100%;
   height:100%;
 
-  background:rgba(0,0,0,0.75);
+  background:#020817;
 
-  display:none;
+  display:flex;
 
   justify-content:center;
   align-items:center;
@@ -276,6 +276,15 @@ body{
   display:none;
 }
 
+.attempts{
+
+  margin-top:14px;
+
+  color:#94a3b8;
+
+  font-size:16px;
+}
+
 </style>
 
 </head>
@@ -315,9 +324,9 @@ if(!enabled){
 
 </script>
 
-<!-- PASSWORD MODAL -->
+<!-- PASSWORD SCREEN -->
 
-<div id="passwordModal">
+<div id="passwordScreen">
 
   <div class="password-box">
 
@@ -334,7 +343,7 @@ if(!enabled){
       class="password-btn"
       onclick="checkPassword()"
     >
-      ПРОШИТЬ
+      ВОЙТИ
     </button>
 
     <div
@@ -342,6 +351,13 @@ if(!enabled){
       class="error-text"
     >
       Неверный пароль
+    </div>
+
+    <div
+      id="attemptsText"
+      class="attempts"
+    >
+      Осталось попыток: 3
     </div>
 
   </div>
@@ -367,11 +383,9 @@ if(!enabled){
   <div class="install-wrap">
 
     <esp-web-install-button
-      id="installer"
       manifest="manifest_full.json">
 
       <button
-        id="realFlashButton"
         slot="activate"
         class="install-btn">
 
@@ -391,13 +405,13 @@ if(!enabled){
 
       <li>Подключите AIR устройство через USB</li>
 
+      <li>Введите пароль</li>
+
       <li>Нажмите «ПОЛНАЯ ПРОШИВКА»</li>
 
       <li>Выберите COM-порт</li>
 
-      <li>Введите пароль</li>
-
-      <li>Начнётся прошивка</li>
+      <li>Дождитесь окончания установки</li>
 
     </ol>
 
@@ -411,33 +425,9 @@ if(!enabled){
 
 <script>
 
-/* ===========================
-   SHOW PASSWORD AFTER PORT
-=========================== */
+/* PASSWORD SYSTEM */
 
-const installer =
-  document.getElementById("installer");
-
-installer.addEventListener(
-  "state-changed",
-  (ev) => {
-
-    if(
-      ev.detail.state === "CONFIRM"
-    ){
-
-      ev.preventDefault();
-
-      document
-        .getElementById("passwordModal")
-        .style.display = "flex";
-    }
-
-});
-
-/* ===========================
-   CHECK PASSWORD
-=========================== */
+let attempts = 3;
 
 function checkPassword(){
 
@@ -447,32 +437,50 @@ function checkPassword(){
   if(entered === password){
 
     document
-      .getElementById("passwordModal")
+      .getElementById("passwordScreen")
       .style.display = "none";
 
     document
       .getElementById("passwordInput")
       .value = "";
 
-    document
-      .getElementById("errorText")
-      .style.display = "none";
-
-    /* ПРОДОЛЖИТЬ ПРОШИВКУ */
-
-    installer.shadowRoot
-      .querySelector("button")
-      .click();
-
     return;
   }
+
+  attempts--;
 
   document
     .getElementById("errorText")
     .style.display = "block";
+
+  document
+    .getElementById("attemptsText")
+    .innerHTML =
+      "Осталось попыток: " + attempts;
+
+  if(attempts <= 0){
+
+    document.body.innerHTML = `
+      <div style="
+        width:100%;
+        height:100vh;
+        background:#020817;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:#ff4444;
+        font-size:42px;
+        font-family:Arial;
+      ">
+        ДОСТУП ЗАБЛОКИРОВАН
+      </div>
+    `;
+
+    throw new Error("Too many attempts");
+  }
 }
 
-/* ENTER */
+/* ENTER SUPPORT */
 
 document
   .getElementById("passwordInput")
