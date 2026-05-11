@@ -1,0 +1,15 @@
+{
+  "name": "AIR Firmware Update",
+  "version": "1.0",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "firmware.bin",
+          "offset": 65536
+        }
+      ]
+    }
+  ]
+}

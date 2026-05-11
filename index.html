@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AIR Installer</title>
+
+<script
+  type="module"
+  src="https://unpkg.com/esp-web-tools@9/dist/web/install-button.js?module">
+</script>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  font-family:Arial,sans-serif;
+
+  background:
+    radial-gradient(circle at center,#0d1b3d 0%,#020817 70%);
+
+  color:white;
+}
+
+.card{
+
+  width:700px;
+
+  background:rgba(15,23,42,0.88);
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  border-radius:36px;
+
+  padding:50px;
+
+  backdrop-filter:blur(10px);
+
+  box-shadow:
+    0 0 60px rgba(0,140,255,0.15);
+}
+
+.logo{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.logo .wifi{
+  font-size:60px;
+  color:#27d7ff;
+  margin-bottom:10px;
+}
+
+.logo h1{
+
+  font-size:110px;
+
+  line-height:1;
+
+  font-weight:900;
+
+  background:
+    linear-gradient(180deg,#35e8ff,#1583ff);
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+
+  text-align:center;
+
+  color:#cbd5e1;
+
+  font-size:30px;
+
+  margin-top:20px;
+
+  margin-bottom:40px;
+}
+
+.install-wrap{
+  text-align:center;
+}
+
+.install-btn{
+
+  width:100%;
+
+  background:
+    linear-gradient(90deg,#1fe4ff,#1583ff);
+
+  border:none;
+
+  color:white;
+
+  font-size:28px;
+
+  font-weight:bold;
+
+  padding:24px;
+
+  border-radius:24px;
+
+  cursor:pointer;
+
+  transition:0.25s;
+
+  box-shadow:
+    0 10px 30px rgba(0,153,255,0.35);
+
+  margin-bottom:20px;
+}
+
+.install-btn:hover{
+  transform:translateY(-3px) scale(1.02);
+}
+
+.instructions{
+
+  margin-top:45px;
+
+  background:rgba(0,0,0,0.22);
+
+  border-radius:24px;
+
+  padding:35px;
+}
+
+.instructions h2{
+
+  color:#29d6ff;
+
+  margin-bottom:25px;
+
+  font-size:34px;
+}
+
+.instructions ol{
+  padding-left:25px;
+}
+
+.instructions li{
+
+  margin-bottom:18px;
+
+  color:#e2e8f0;
+
+  font-size:22px;
+
+  line-height:1.5;
+}
+
+.footer{
+
+  text-align:center;
+
+  margin-top:35px;
+
+  color:#94a3b8;
+
+  font-size:20px;
+}
+
+/* PASSWORD SCREEN */
+
+#passwordScreen{
+
+  position:fixed;
+
+  top:0;
+  left:0;
+
+  width:100%;
+  height:100%;
+
+  background:#020817;
+
+  display:flex;
+
+  justify-content:center;
+  align-items:center;
+
+  z-index:9999;
+}
+
+.password-box{
+
+  width:420px;
+
+  background:#0f172a;
+
+  padding:40px;
+
+  border-radius:28px;
+
+  text-align:center;
+
+  box-shadow:
+    0 0 50px rgba(0,140,255,0.18);
+}
+
+.password-box h2{
+
+  font-size:34px;
+
+  margin-bottom:25px;
+
+  color:white;
+}
+
+.password-input{
+
+  width:100%;
+
+  padding:18px;
+
+  font-size:24px;
+
+  border:none;
+
+  border-radius:16px;
+
+  outline:none;
+
+  background:#1e293b;
+
+  color:white;
+
+  margin-bottom:20px;
+}
+
+.password-btn{
+
+  width:100%;
+
+  padding:18px;
+
+  border:none;
+
+  border-radius:18px;
+
+  font-size:24px;
+
+  font-weight:bold;
+
+  cursor:pointer;
+
+  background:
+    linear-gradient(90deg,#1fe4ff,#1583ff);
+
+  color:white;
+}
+
+.error-text{
+
+  margin-top:18px;
+
+  color:#ff6666;
+
+  font-size:18px;
+
+  display:none;
+}
+
+.attempts{
+
+  margin-top:14px;
+
+  color:#94a3b8;
+
+  font-size:16px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<script>
+
+const enabled = true;
+
+const password = "1234";
+
+if(!enabled){
+
+  document.body.innerHTML = `
+    <div style="
+      width:100%;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:#020817;
+      color:#ff5555;
+      font-size:42px;
+      font-family:Arial;
+    ">
+      ПРОШИВКА ВРЕМЕННО НЕДОСТУПНА
+    </div>
+  `;
+
+  throw new Error("Disabled");
+}
+
+</script>
+
+<!-- PASSWORD -->
+
+<div id="passwordScreen">
+
+  <div class="password-box">
+
+    <h2>Введите пароль</h2>
+
+    <input
+      id="passwordInput"
+      class="password-input"
+      type="password"
+      placeholder="Пароль"
+    >
+
+    <button
+      class="password-btn"
+      onclick="checkPassword()"
+    >
+      ВОЙТИ
+    </button>
+
+    <div
+      id="errorText"
+      class="error-text"
+    >
+      Неверный пароль
+    </div>
+
+    <div
+      id="attemptsText"
+      class="attempts"
+    >
+      Осталось попыток: 3
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="card">
+
+  <div class="logo">
+
+    <div class="wifi">📶</div>
+
+    <h1>AIR</h1>
+
+  </div>
+
+  <div class="subtitle">
+    Онлайн-прошивка ESP32-S3 через Chrome
+  </div>
+
+  <div class="install-wrap">
+
+    <!-- FULL -->
+
+    <esp-web-install-button
+      manifest="manifest_full.json">
+
+      <button
+        slot="activate"
+        class="install-btn">
+
+        ПОЛНАЯ ПРОШИВКА
+
+      </button>
+
+    </esp-web-install-button>
+
+    <!-- FIRMWARE -->
+
+    <esp-web-install-button
+      manifest="manifest_firmware.json">
+
+      <button
+        slot="activate"
+        class="install-btn">
+
+        ОБНОВИТЬ FIRMWARE
+
+      </button>
+
+    </esp-web-install-button>
+
+    <!-- LITTLEFS -->
+
+    <esp-web-install-button
+      manifest="manifest_littlefs.json">
+
+      <button
+        slot="activate"
+        class="install-btn">
+
+        ОБНОВИТЬ LITTLEFS
+
+      </button>
+
+    </esp-web-install-button>
+
+  </div>
+
+  <div class="instructions">
+
+    <h2>ИНСТРУКЦИЯ</h2>
+
+    <ol>
+
+      <li>Подключите AIR устройство через USB</li>
+
+      <li>Введите пароль</li>
+
+      <li>Выберите нужный режим прошивки</li>
+
+      <li>Выберите COM-порт</li>
+
+      <li>Дождитесь окончания установки</li>
+
+    </ol>
+
+  </div>
+
+  <div class="footer">
+    AIR Installer • 2026
+  </div>
+
+</div>
+
+<script>
+
+let attempts = 3;
+
+function checkPassword(){
+
+  const entered =
+    document.getElementById("passwordInput").value;
+
+  if(entered === password){
+
+    document
+      .getElementById("passwordScreen")
+      .style.display = "none";
+
+    return;
+  }
+
+  attempts--;
+
+  document
+    .getElementById("errorText")
+    .style.display = "block";
+
+  document
+    .getElementById("attemptsText")
+    .innerHTML =
+      "Осталось попыток: " + attempts;
+
+  if(attempts <= 0){
+
+    document.body.innerHTML = `
+      <div style="
+        width:100%;
+        height:100vh;
+        background:#020817;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:#ff4444;
+        font-size:42px;
+        font-family:Arial;
+      ">
+        ДОСТУП ЗАБЛОКИРОВАН
+      </div>
+    `;
+
+    throw new Error("Too many attempts");
+  }
+}
+
+document
+  .getElementById("passwordInput")
+  .addEventListener("keypress", function(event){
+
+    if(event.key === "Enter"){
+      checkPassword();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
