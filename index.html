@@ -295,9 +295,17 @@ body{
 
 <script>
 
+/* ===========================
+   SETTINGS
+=========================== */
+
 const enabled = true;
 
 const password = "1234";
+
+/* ===========================
+   ENABLE CHECK
+=========================== */
 
 if(!enabled){
 
@@ -322,7 +330,7 @@ if(!enabled){
 
 </script>
 
-<!-- PASSWORD -->
+<!-- PASSWORD SCREEN -->
 
 <div id="passwordScreen">
 
@@ -380,9 +388,10 @@ if(!enabled){
 
   <div class="install-wrap">
 
-    <!-- FULL -->
+    <!-- FULL FLASH -->
 
     <esp-web-install-button
+      id="fullBtn"
       manifest="manifest_full.json">
 
       <button
@@ -398,6 +407,7 @@ if(!enabled){
     <!-- FIRMWARE -->
 
     <esp-web-install-button
+      id="firmwareBtn"
       manifest="manifest_firmware.json">
 
       <button
@@ -413,6 +423,7 @@ if(!enabled){
     <!-- LITTLEFS -->
 
     <esp-web-install-button
+      id="littlefsBtn"
       manifest="manifest_littlefs.json">
 
       <button
@@ -455,6 +466,10 @@ if(!enabled){
 
 <script>
 
+/* ===========================
+   PASSWORD SYSTEM
+=========================== */
+
 let attempts = 3;
 
 function checkPassword(){
@@ -467,6 +482,10 @@ function checkPassword(){
     document
       .getElementById("passwordScreen")
       .style.display = "none";
+
+    document
+      .getElementById("passwordInput")
+      .value = "";
 
     return;
   }
@@ -504,12 +523,82 @@ function checkPassword(){
   }
 }
 
+/* ===========================
+   ENTER SUPPORT
+=========================== */
+
 document
   .getElementById("passwordInput")
   .addEventListener("keypress", function(event){
 
     if(event.key === "Enter"){
       checkPassword();
+    }
+
+});
+
+/* ===========================
+   RELOCK AFTER FLASH
+=========================== */
+
+function relockInstaller(){
+
+  document
+    .getElementById("passwordScreen")
+    .style.display = "flex";
+
+  document
+    .getElementById("passwordInput")
+    .value = "";
+}
+
+/* FULL FLASH */
+
+document
+  .getElementById("fullBtn")
+  .addEventListener("state-changed", (ev) => {
+
+    if(ev.detail.state === "finished"){
+
+      setTimeout(() => {
+
+        relockInstaller();
+
+      }, 1500);
+    }
+
+});
+
+/* FIRMWARE */
+
+document
+  .getElementById("firmwareBtn")
+  .addEventListener("state-changed", (ev) => {
+
+    if(ev.detail.state === "finished"){
+
+      setTimeout(() => {
+
+        relockInstaller();
+
+      }, 1500);
+    }
+
+});
+
+/* LITTLEFS */
+
+document
+  .getElementById("littlefsBtn")
+  .addEventListener("state-changed", (ev) => {
+
+    if(ev.detail.state === "finished"){
+
+      setTimeout(() => {
+
+        relockInstaller();
+
+      }, 1500);
     }
 
 });
