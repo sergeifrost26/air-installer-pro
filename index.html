@@ -123,8 +123,6 @@ body{
 
   box-shadow:
     0 10px 30px rgba(0,153,255,0.35);
-
-  margin-bottom:20px;
 }
 
 .install-btn:hover{
@@ -177,7 +175,7 @@ body{
   font-size:20px;
 }
 
-/* PASSWORD WINDOW */
+/* PASSWORD MODAL */
 
 #passwordModal{
 
@@ -189,7 +187,7 @@ body{
   width:100%;
   height:100%;
 
-  background:rgba(0,0,0,0.7);
+  background:rgba(0,0,0,0.75);
 
   display:none;
 
@@ -286,17 +284,13 @@ body{
 
 <script>
 
-/* ===========================
-   SETTINGS
-=========================== */
+/* SETTINGS */
 
 const enabled = true;
 
 const password = "1234";
 
-/* ===========================
-   ENABLE CHECK
-=========================== */
+/* ENABLE CHECK */
 
 if(!enabled){
 
@@ -340,7 +334,7 @@ if(!enabled){
       class="password-btn"
       onclick="checkPassword()"
     >
-      ПРОДОЛЖИТЬ
+      ПРОШИТЬ
     </button>
 
     <div
@@ -373,11 +367,11 @@ if(!enabled){
   <div class="install-wrap">
 
     <esp-web-install-button
-      id="fullInstaller"
+      id="installer"
       manifest="manifest_full.json">
 
       <button
-        id="flashButton"
+        id="realFlashButton"
         slot="activate"
         class="install-btn">
 
@@ -399,11 +393,11 @@ if(!enabled){
 
       <li>Нажмите «ПОЛНАЯ ПРОШИВКА»</li>
 
-      <li>Введите пароль</li>
-
       <li>Выберите COM-порт</li>
 
-      <li>Дождитесь окончания установки</li>
+      <li>Введите пароль</li>
+
+      <li>Начнётся прошивка</li>
 
     </ol>
 
@@ -418,20 +412,26 @@ if(!enabled){
 <script>
 
 /* ===========================
-   PASSWORD BEFORE FLASH
+   SHOW PASSWORD AFTER PORT
 =========================== */
 
-const flashButton =
-  document.getElementById("flashButton");
+const installer =
+  document.getElementById("installer");
 
-const passwordModal =
-  document.getElementById("passwordModal");
+installer.addEventListener(
+  "state-changed",
+  (ev) => {
 
-flashButton.addEventListener("click", (event) => {
+    if(
+      ev.detail.state === "CONFIRM"
+    ){
 
-  event.preventDefault();
+      ev.preventDefault();
 
-  passwordModal.style.display = "flex";
+      document
+        .getElementById("passwordModal")
+        .style.display = "flex";
+    }
 
 });
 
@@ -446,7 +446,9 @@ function checkPassword(){
 
   if(entered === password){
 
-    passwordModal.style.display = "none";
+    document
+      .getElementById("passwordModal")
+      .style.display = "none";
 
     document
       .getElementById("passwordInput")
@@ -456,13 +458,11 @@ function checkPassword(){
       .getElementById("errorText")
       .style.display = "none";
 
-    /* ЗАПУСК ПРОШИВКИ */
+    /* ПРОДОЛЖИТЬ ПРОШИВКУ */
 
-    setTimeout(() => {
-
-      flashButton.click();
-
-    }, 200);
+    installer.shadowRoot
+      .querySelector("button")
+      .click();
 
     return;
   }
@@ -472,9 +472,7 @@ function checkPassword(){
     .style.display = "block";
 }
 
-/* ===========================
-   ENTER SUPPORT
-=========================== */
+/* ENTER */
 
 document
   .getElementById("passwordInput")
