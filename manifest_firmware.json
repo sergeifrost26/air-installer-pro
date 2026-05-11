@@ -1,13 +1,14 @@
 {
   "name": "AIR Firmware Update",
   "version": "1.0",
+  "new_install_prompt_erase": false,
   "builds": [
     {
       "chipFamily": "ESP32-S3",
       "parts": [
         {
           "path": "firmware.bin",
-          "offset": 65536
+          "offset": "0x10000"
         }
       ]
     }
