@@ -538,70 +538,36 @@ document
 });
 
 /* ===========================
-   RELOCK AFTER FLASH
+   AUTO LOCK AFTER 10 SEC
 =========================== */
 
-function relockInstaller(){
+function startAutoReload(){
 
-  document
-    .getElementById("passwordScreen")
-    .style.display = "flex";
+  setTimeout(() => {
 
-  document
-    .getElementById("passwordInput")
-    .value = "";
+    location.reload();
+
+  }, 10000);
+
 }
 
-/* FULL FLASH */
+/* FULL */
 
 document
   .getElementById("fullBtn")
-  .addEventListener("state-changed", (ev) => {
-
-    if(ev.detail.state === "finished"){
-
-      setTimeout(() => {
-
-        relockInstaller();
-
-      }, 1500);
-    }
-
-});
+  .addEventListener("click", startAutoReload);
 
 /* FIRMWARE */
 
 document
   .getElementById("firmwareBtn")
-  .addEventListener("state-changed", (ev) => {
-
-    if(ev.detail.state === "finished"){
-
-      setTimeout(() => {
-
-        relockInstaller();
-
-      }, 1500);
-    }
-
-});
+  .addEventListener("click", startAutoReload);
 
 /* LITTLEFS */
 
 document
   .getElementById("littlefsBtn")
-  .addEventListener("state-changed", (ev) => {
-
-    if(ev.detail.state === "finished"){
-
-      setTimeout(() => {
-
-        relockInstaller();
-
-      }, 1500);
-    }
-
-});
+  .addEventListener("click", startAutoReload);
 
 </script>
 
